@@ -18,5 +18,14 @@ namespace hotel_booking_tests
             var date = new DateTime(2021,6,7);
             bm.IsRoomAvailable(101, date).Should().BeTrue();
         }
+
+        [Test]
+        public void IsRoomAvailable_Returns_False_if_a_booking_has_been_made_for_room_date_pair()
+        {
+            IBookingManager bm = new BookingManager();
+            var date = new DateTime(2021,6,7);
+            bm.AddBooking("Little Richard", 101, date);
+            bm.IsRoomAvailable(101, date).Should().BeFalse();
+        }
     }
 }

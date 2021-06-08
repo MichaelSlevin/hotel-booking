@@ -1,14 +1,26 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public class BookingManager : IBookingManager
 {    
+    private readonly object bookingLock = new object();
+    public BookingManager()
+    {
+        Bookings = new List<RoomBooking>();
+    }
     public void AddBooking(string guest, int room, DateTime date)
     {
-        throw new NotImplementedException();
+        lock(bookingLock)
+        {
+            var booking = new RoomBooking(guest, room, date);
+            Bookings.Add(booking);
+        }
     }
 
     public bool IsRoomAvailable(int room, DateTime date)
     {
-        return true;
+        return !Bookings.Any(x => x.Room == room && x.Date == date);
     }
+    private List<RoomBooking> Bookings;
 }
