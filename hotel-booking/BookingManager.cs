@@ -13,6 +13,10 @@ public class BookingManager : IBookingManager
     {
         lock(bookingLock)
         {
+            if(!IsRoomAvailable(room,date))
+            {
+                throw new RoomUnavailableException();
+            }
             var booking = new RoomBooking(guest, room, date);
             Bookings.Add(booking);
         }
