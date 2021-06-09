@@ -56,5 +56,21 @@ namespace hotel_booking_tests
             availableRooms.Contains(2).Should().BeTrue();
             availableRooms.Contains(2007).Should().BeTrue();
         }
+
+        [Test]
+        public void GetAvailableRooms_Does_Not_Return_Rooms_That_Are_Booked()
+        {
+            var rooms = new List<int>()
+            {
+                1,2,2007
+            };
+            var date = new DateTime(2021,6,7);
+            IBookingManager bm = new BookingManager(rooms);
+            bm.AddBooking("Cyrus", 2007, date);
+            var availableRooms = bm.GetAvailableRooms(date).ToList();
+            availableRooms.Contains(1).Should().BeTrue();
+            availableRooms.Contains(2).Should().BeTrue();
+            availableRooms.Contains(2007).Should().BeFalse();
+        }
     }
 }
