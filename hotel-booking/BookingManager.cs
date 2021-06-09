@@ -4,27 +4,37 @@ using System.Linq;
 
 public class BookingManager : IBookingManager
 {    
-    private readonly object bookingLock = new object();
-    public BookingManager()
+    private readonly object _bookingLock = new object();
+    private List<RoomBooking> _bookings;
+    private readonly IEnumerable<int> _rooms;
+
+    public BookingManager(IEnumerable<int> rooms)
     {
-        Bookings = new List<RoomBooking>();
+        _bookings = new List<RoomBooking>();
+        _rooms = rooms;
     }
     public void AddBooking(string guest, int room, DateTime date)
     {
-        lock(bookingLock)
+        lock(_bookingLock)
         {
             if(!IsRoomAvailable(room,date))
             {
                 throw new RoomUnavailableException();
             }
             var booking = new RoomBooking(guest, room, date);
-            Bookings.Add(booking);
+            _bookings.Add(booking);
         }
     }
 
     public bool IsRoomAvailable(int room, DateTime date)
     {
-        return !Bookings.Any(x => x.Room == room && x.Date == date);
+        return !_bookings.Any(x => x.Room == room && x.Date == date);
     }
-    private List<RoomBooking> Bookings;
+
+    public IEnumerable<int> GetAvailableRooms(DateTime date)
+    {
+        return _rooms.Where(x=> IsRoomAvailable(x, date));
+    }
+
+    
 }
